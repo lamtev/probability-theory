@@ -1,60 +1,44 @@
-from operator import itemgetter
-from queue import Queue
-
-import matplotlib.pyplot as plt
-
 from alphabet import Alphabet
+from decoding import decode, independent_prob_distribution
+from information_theory import entropy, k_th_letter_distribution, information
 from letters_distribution import LettersDistribution
-from probability import p_posterior
+from plotting import plot_posterior_prob_distr, plot_entropy, plot_information
 
 f = open('data/messages.txt', encoding='utf-8-sig')
-
 messages = []
 for line in f:
     messages.append(line.split())
 f.close()
 
+q = 0.135
+s = 0
+messages_number = len(messages)
+
 alphabet = Alphabet('data/alphabet.txt')
-alphas = alphabet.code_letter.keys()
 distribution = LettersDistribution(alphabet, 'data/cyrillic_distribution.txt')
-code_prob = distribution.quiprobable_code_prob
-# code_prob = distribution.cyrillic_code_prob
-code_probs = Queue(208)
-for i in range(208):
-    code_probs.put(code_prob)
-real_messages = []
-posterior_distributions = []
-for message in messages:
-    real_message = []
-    posterior_distributions.append([])
-    for letter in message:
-        local_posterior_distribution = []
-        code_prob = code_probs.get()
-        for alpha in alphas:
-            local_posterior_distribution.append((alpha, p_posterior(alpha, letter, code_prob, 0.135)))
-        posterior_distributions[-1].append(
-            [(local_posterior_distribution.index(pair) + 1, pair[1]) for pair in local_posterior_distribution]
-        )
-        real_message.append(alphabet.code_letter.get(max(local_posterior_distribution, key=itemgetter(1))[0]))
-        code_probs.put(dict(local_posterior_distribution))
 
-    real_messages.append(real_message)
-for real_message in real_messages:
-    real_message = ''.join(real_message)
-    print(real_message)
+decoded_messages1, posterior_distributions1 = decode(messages, alphabet, distribution.quiprobable_code_prob, q)
+print(decoded_messages1[-1])
 
-letterNumber = 0
-for i in range(len(posterior_distributions)):
-    axes = plt.figure(figsize=(13, 8)).gca()
+plot_posterior_prob_distr(posterior_distributions1, decoded_messages1, s)
 
-    axes.plot([pair[0] for pair in posterior_distributions[i][letterNumber]],
-              [pair[1] for pair in posterior_distributions[i][letterNumber]], linewidth=1.5)
+decoded_messages2, posterior_distributions2 = decode(messages, alphabet, distribution.cyrillic_code_prob, q)
+print(decoded_messages2[-1])
+plot_posterior_prob_distr(posterior_distributions2, decoded_messages2, s)
 
-    axes.set_xlabel('$N$', fontsize=20, labelpad=20)
-    axes.set_ylabel('$P$', fontsize=20, labelpad=20)
-    axes.tick_params(labelsize=15, pad=10)
-    axes.set_xlim([1, 87])
-    plt.title('Апостериорное распределение вероятностей для {s}-й буквы ({a}) после {n}-й посылки'
-              .format(a=real_messages[-1][letterNumber], n=i + 1, s=letterNumber + 1), fontsize=20)
-    plt.tight_layout()
-    plt.show()
+ind_post_prob_distr1 = independent_prob_distribution(messages, alphabet, distribution.quiprobable_code_prob, q)
+ind_post_prob_distr2 = independent_prob_distribution(messages, alphabet, distribution.cyrillic_code_prob, q)
+
+entropy1 = entropy(k_th_letter_distribution(ind_post_prob_distr1, s))
+entropy2 = entropy(k_th_letter_distribution(ind_post_prob_distr2, s))
+
+info1 = information(k_th_letter_distribution(ind_post_prob_distr1, s), messages_number)
+info2 = information(k_th_letter_distribution(ind_post_prob_distr2, s), messages_number)
+
+points = [i + 1 for i in range(messages_number)]
+
+plot_entropy(points, entropy1)
+plot_entropy(points, entropy2)
+
+plot_information(points, info1)
+plot_information(points, info2)
