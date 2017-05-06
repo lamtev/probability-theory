@@ -20,7 +20,7 @@ class LettersDistribution:
 
     def make_cyrillic_code_prob(self, path_to_file: str):
         # TODO
-        f = open(path_to_file, encoding='utf8')
+        f = open(path_to_file, encoding='utf-8-sig')
         cyrillic_distribution_list = []
         for line in f:
             cyrillic_distribution_list.append(line.split())

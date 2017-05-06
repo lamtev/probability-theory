@@ -10,7 +10,7 @@ class Alphabet:
         self.code_letter = dict(self.code_letter_list)
 
     def read_from_file(self, path_to_file: str):
-        f = open(path_to_file, encoding='utf8')
+        f = open(path_to_file, encoding='utf-8-sig')
         for line in f:
             spl = line.split()
             self.letter_code_list.append(spl)

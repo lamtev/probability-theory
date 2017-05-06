@@ -16,5 +16,4 @@ def p_of_receiving_y(y: str, code_prob: dict, q: float) -> float:
 def p_posterior(x: str, y: str, code_prob: dict, q: float, p_y: float = 0) -> float:
     if p_y is 0:
         p_y = p_of_receiving_y(y, code_prob, q)
-
     return p_of_receiving_y_if_x_was_sent(y, x, q) * code_prob.get(x) / p_y
