@@ -1,4 +1,5 @@
 from alphabet import Alphabet
+from text_producing import make_messages_text
 from decoding import decode, independent_prob_distribution
 from information_theory import entropy, k_th_letter_distribution, information
 from letters_distribution import LettersDistribution
@@ -35,7 +36,6 @@ plot_entropy(points, entropy1)
 
 info1 = information(k_th_letter_distribution(ind_post_prob_distr1, s), distribution.quiprobable_code_prob)
 plot_information(points, info1)
-
 
 print()
 print('Вероятности согласно частоте букв в русском алфавите')
