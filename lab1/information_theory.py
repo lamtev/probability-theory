@@ -1,4 +1,4 @@
-from math import log2, ceil
+from math import log2
 
 
 def entropy(posterior_probabilities: list) -> list:
@@ -15,8 +15,9 @@ def entropy(posterior_probabilities: list) -> list:
     return res
 
 
-def information(posterior_probabilities: list, number_of_messages: int) -> list:
-    return [ceil(log2(number_of_messages)) - x for x in entropy(posterior_probabilities)]
+def information(posterior_probabilities: list, code_prob: dict) -> list:
+    entrx = entropy([list(code_prob.values())])[0]
+    return [entrx - x for x in entropy(posterior_probabilities)]
 
 
 def k_th_letter_distribution(distribution: list, k: int) -> list:
