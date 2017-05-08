@@ -23,13 +23,13 @@ class LettersDistribution:
         codes = self.alphabet.code_letter_duplicate.keys()
         self.quiprobable_code_prob_dupl = self.get_quirprobable_code_prob(codes)
 
-    def make_cyrillic_code_prob_dupl(self, path_to_file: str):
-        letter_code = self.alphabet.letter_code_duplicate
-        self.cyrillic_code_prob_dupl = self.get_cyrillic_code_prob(path_to_file, letter_code)
-
     def make_cyrillic_code_prob(self, path_to_file: str):
         letter_code = self.alphabet.letter_code
         self.cyrillic_code_prob = self.get_cyrillic_code_prob(path_to_file, letter_code)
+
+    def make_cyrillic_code_prob_dupl(self, path_to_file: str):
+        letter_code = self.alphabet.letter_code_duplicate
+        self.cyrillic_code_prob_dupl = self.get_cyrillic_code_prob(path_to_file, letter_code)
 
     @staticmethod
     def get_quirprobable_code_prob(codes: list):
